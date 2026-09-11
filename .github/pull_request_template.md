@@ -1,24 +1,26 @@
-<!-- This app does one thing: show Claude Code's live status on macOS. Keep PRs small, focused, and tested. -->
+<!-- clauding does one thing: show whether Claude Code is working, waiting on you, or idle,
+     and on which model. Keep PRs small, focused, and tested. -->
 
 ## What this changes
 
 
 ## Issue
-<!-- Link the issue this addresses if there is one (bug fixes and known-issue PRs are welcome without one). -->
+<!-- Link the issue this addresses, if there is one. Bug fixes are welcome without one. -->
 
 ## How you tested it
-Behavior differs by surface and by terminal, so this is the part I actually read. Be specific about what you did and what you saw. "Builds clean" is not testing.
+This is the part I actually read. `pytest` passing is necessary, not sufficient — the
+interesting failures are in states the tests can't reach. Be specific about what you did
+and what you saw.
 
-- [ ] Tested in the **Claude desktop app**
-- [ ] Tested in the **CLI, in a terminal**
-- **Which terminal did you use?** <!-- Terminal.app / Ghostty / iTerm2 / WezTerm / other. Results genuinely differ between them, so name it. -->
+- [ ] `pytest` passes
+- [ ] Exercised against a real Claude Code session, not only fabricated state files
+- **Which states did you see?** <!-- idle / clauding / waiting for input -->
+- **Terminal, or the desktop app's Code mode?**
 - **What you did and what you saw:**
 
 ## Checklist
-- [ ] I built off the latest `main`, so I'm not fixing something that already changed.
+- [ ] Built off the latest `main`.
 - [ ] One focused change, not a bundle of unrelated edits.
-- [ ] Screenshot or short screen recording attached for any visual or timing change.
-- [ ] I read CONTRIBUTING.md and the [known issues](https://github.com/m1ckc3s/claude-status-bar/blob/main/TROUBLESHOOTING.md#known-issues), and this fits the scope.
-
-## Is this for everyone, or is it your fork?
-<!-- This project has inspired a lot of forks and ports (Codex, Linux, Windows, other agents), which is genuinely great. Before submitting, ask whether this change is for this app's users or really belongs in your own fork. Codex support and platform ports are out of scope here. -->
+- [ ] For anything visual: a screenshot of the menu bar, in both light and dark.
+- [ ] No new network calls, and no new work in the hook path.
+- [ ] I read [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) and this fits the scope.

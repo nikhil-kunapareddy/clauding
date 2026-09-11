@@ -1,61 +1,59 @@
 # Contributing
 
-Thanks for your interest. This is a tiny menu bar app and I'd like to keep it that way.
+Thanks for your interest. This is a deliberately tiny tool and I'd like to keep it that
+way.
 
-It does one thing: show Claude Code's live status. It stays local (the only network call is a daily update check), free (no API key, no spend), and small (a status bar, not a dashboard).
-
-It's also inspired a bunch of forks and ports, Codex versions, Linux, Windows, other agents, and I love seeing that. If your idea is one of those, it almost certainly belongs in your own fork, not here. This app is Claude Code on macOS, and I want to keep it that.
+It does one thing: show whether Claude Code is working, waiting on you, or idle, and which
+model and effort level the session is on. It stays local (no network calls at all), free
+(no API key, no spend), and small.
 
 ## What's welcome
 
-Bug fixes, performance wins, animation and visual polish, better session focus, and compatibility fixes (macOS versions, CPU architectures, terminals). New crab animations and icon styles are especially welcome.
+Bug fixes. Compatibility fixes — macOS versions, Python versions, terminals, the desktop
+app. Fixes for cases where the indicator gets stuck because Claude Code fired no hook.
+Better handling of model ids as new ones appear.
 
-Also the [known issues](https://github.com/m1ckc3s/claude-status-bar/blob/main/TROUBLESHOOTING.md#known-issues) in TROUBLESHOOTING.md: some behavior that looks like a bug is understood and intentional.
+## Probably not
 
-## Won't be merged
+- **Anything that grows the display.** Timers, per-tool labels, session lists, progress.
+  The three states are the whole design, and a menu bar item that changes width every few
+  seconds is worse than one that doesn't.
+- **Network access of any kind**, including update checks. `PRIVACY.md` is a promise.
+- **Anything that costs money or needs an API key.** No usage meters, no cost dashboards,
+  no telemetry.
+- **Heavy work in the hooks.** They run on every single event: write one small file and
+  exit. No network, no imports that aren't needed, nothing that can hang a session.
+- **Acting on your machine.** This displays state. It doesn't prevent sleep, hold power
+  assertions, run privileged helpers, or do anything in the background beyond drawing.
+- **Ports to other agents or platforms.** Great projects — as your own fork. This one is
+  Claude Code on macOS.
 
-- Sending your conversation, files, or project to any API or relay.
-- Anything that costs money or needs an API key.
-- Usage meters, cost dashboards, analytics, or telemetry.
-- Heavy work in the hooks. They run on every event, so they write one small state file and exit: no network, no per-prompt API calls.
-- Hardcoding for one locale, provider, relay, or terminal.
-- New settings stores or dependencies for a minor feature when what's already there works.
-- Changing how your machine behaves: preventing sleep, holding power assertions, running privileged helpers, or any background action beyond showing status. The app displays state, it doesn't act on your system.
-- Codex support, ports to Linux or Windows, or support for other agents. Great projects, but as your own fork. This one is Claude Code on macOS.
-
-## Building
-
-You'll need macOS 12+, the Swift toolchain (Xcode Command Line Tools), and Node.js (the hooks run on Node).
+## Working on it
 
 ```bash
-./build.sh          # -> build/ClaudeStatusBar.app
-./build.sh --dmg    # also builds a .dmg
+git clone https://github.com/nikhil-kunapareddy/clauding && cd clauding
+python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
+.venv/bin/python -m pytest
 ```
 
-Signing and notarization use the maintainer's Developer ID; without it you get an ad-hoc build, which is fine for testing. Launch it, start a Claude Code session, and the icon appears.
+To try your build without disturbing an existing install, point `HOME` at a scratch
+directory — every path the tool touches hangs off it:
 
-Build off the latest `main` so you're not fixing something that already changed.
+```bash
+HOME=/tmp/clauding-scratch .venv/bin/clauding install
+HOME=/tmp/clauding-scratch .venv/bin/clauding status
+```
 
-## Testing
+`clauding status` is the fastest way to check behaviour: it prints exactly what the bar
+would show, with no GUI involved, so it works over SSH and in tests.
 
-Before you open a PR, actually run it. "Builds clean" is not testing.
+A few things in here look arbitrary and aren't — the literal-string transcript parsing,
+the `isSidechain` filter, the process-based liveness check, the absolute-path hook
+commands. Each has a comment saying why. If one seems needlessly clever, read the comment
+before simplifying it; if the comment doesn't justify it, that's a bug in the comment.
 
-Test it on both surfaces, because they behave differently:
+## Tests
 
-- the **Claude desktop app**, and
-- the **CLI, in a terminal**.
-
-And tell me which terminal you used (Terminal.app, Ghostty, iTerm2, WezTerm, and so on). Behavior genuinely differs between them. For any visual or timing change, attach a screenshot or a short screen recording.
-
-
-## What to expect
-
-This is a solo hobby project. Replies can be slow, and I may decline a perfectly good PR because it adds complexity or scope I don't want to carry. That's not a knock on your work. When in doubt keep the change small, and check the [known issues](https://github.com/m1ckc3s/claude-status-bar/blob/main/TROUBLESHOOTING.md#known-issues) first: some behavior that looks like a bug is intentional and already understood, timing, lifecycle, and self-quit especially.
-
-## Commits
-
-[Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `chore`, `refactor`, `style`, `docs`, `perf`. Branches: `type/kebab-case-description`.
-
-## License
-
-MIT. By contributing, you agree your contributions are licensed under it.
+`pytest`. The install and hook tests run the real console scripts as subprocesses against
+a temporary `HOME`, because that's what Claude Code actually executes. New behaviour wants
+a test; the suite runs in under two seconds.

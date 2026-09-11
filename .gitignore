@@ -7,3 +7,11 @@ node_modules/
 CLAUDE.md
 ROADMAP.md
 ARCHITECTURE.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+.pytest_cache/

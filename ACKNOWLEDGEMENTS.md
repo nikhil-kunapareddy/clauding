@@ -1,5 +1,16 @@
 # Acknowledgements
 
+clauding is a Python rewrite of [Claude Status
+Bar](https://github.com/m1ckc3s/claude-status-bar) by **[@m1ckc3s](https://github.com/m1ckc3s)**
+(Mick Cesanek), whose Swift implementation this replaces. The idea, the hook protocol and
+the per-session state-file design are all his; MIT, and the licence is unchanged.
+
+The credits below are that project's, carried over because the work they describe is still
+load-bearing here — multi-session state, the process-based liveness check, the interrupt
+recovery, the no-`git`-spawn HEAD read, and the hook PATH hardening that an absolute-path
+command now makes unnecessary. The names refer to PRs and issues on the upstream repo.
+
+
 Claude Status Bar's multi-session support grew out of several community contributions. Thank you to:
 
 - **[@BrennenRocks](https://github.com/BrennenRocks)**, [PR #13](https://github.com/m1ckc3s/claude-status-bar/pull/13): the per-session / multi-session implementation. Major contributions here.
